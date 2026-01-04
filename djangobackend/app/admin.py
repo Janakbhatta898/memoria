@@ -2,11 +2,11 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib import admin
-from .models import Patient, Reminder
+from .models import Patient, Reminder,Todo
 
 @admin.register(Patient)
 class PatientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'age', 'id')
+    list_display = ('name', 'age', 'id',)
     search_fields = ('name',)
     list_filter = ('age',)
 
@@ -16,3 +16,7 @@ class ReminderAdmin(admin.ModelAdmin):
     list_filter = ('is_completed', 'time')
     search_fields = ('title', 'patient__name')
     
+@admin.register(Todo)
+class TodoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'patient', 'todo')
+    search_fields = ('todo', 'patient__name')

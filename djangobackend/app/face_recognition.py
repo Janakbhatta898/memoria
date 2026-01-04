@@ -4,6 +4,9 @@ from django.utils.timezone import now
 from datetime import timedelta
 from .models import Reminder
 import threading
+import pyttsx3
+import queue
+import time
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -16,6 +19,18 @@ THRESHOLD = 80
 # Global variable to store current reminder
 current_reminder = {'text': '', 'show': False}
 reminder_lock = threading.Lock()
+
+
+
+def gnerate_voice(text):
+    engine=pyttsx3.init()
+    # blocks until a new text arrives
+    engine.say(text)
+    engine.runAndWait()
+           
+
+   
+
 
 def check_reminders_thread(patient_id):
     """Check reminders in background thread"""
@@ -35,7 +50,9 @@ def check_reminders_thread(patient_id):
                 reminder = reminders.first()
                 with reminder_lock:
                     current_reminder['text'] = f"{reminder.title} - {reminder.description}"
+                    
                     current_reminder['show'] = True
+                    
                 
                 # Mark as sent
                 reminder.is_sent = True
@@ -98,6 +115,10 @@ def gen_frames(patient_id):
         with reminder_lock:
             if current_reminder['show']:
                 reminder_text = current_reminder['text']
+                #speech_queue.put(current_reminder['text'])
+                
+                
+               
                 # Draw reminder box
                 text_size = cv.getTextSize(reminder_text, cv.FONT_HERSHEY_SIMPLEX, 0.7, 2)[0]
                 box_width = text_size[0] + 20

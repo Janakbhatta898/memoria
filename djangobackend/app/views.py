@@ -6,6 +6,17 @@ from .serializers import PatientSerializer
 from django.utils.timezone import now
 from datetime import timedelta
 from . import face_recognition
+from django.http import JsonResponse
+from .models import Todo
+
+def todo_list(request):
+    patient_id = request.session.get('patient_id')
+
+    todos = Todo.objects.filter(
+        patient_id=patient_id
+    ).values("id", "todo")
+
+    return JsonResponse(list(todos), safe=False)  
 
 
 def home(request):
@@ -38,32 +49,3 @@ def video_feed(request):
 class PatientAPIView(generics.ListCreateAPIView):
     queryset = Patient.objects.all()
     serializer_class = PatientSerializer
-# Simple endpoint to check if current time matches reminder time
-def check_reminder(request):
-    patient_id = request.session.get('patient_id')
-    if not patient_id:
-        return JsonResponse({'has_reminder': False, 'error': 'No patient_id in session'})
-    
-    current_time = now()
-    # Check reminders that should trigger now
-    # Look for reminders within last 30 seconds that haven't been sent
-    reminders = Reminder.objects.filter(
-        patient_id=patient_id,
-        time__lte=current_time,
-        time__gte=current_time - timedelta(seconds=30),
-        is_sent=False
-    )
-    
-    if reminders.exists():
-        reminder = reminders.first()
-        # Mark as sent
-        reminder.is_sent = True
-        reminder.save()
-        return JsonResponse({
-            'has_reminder': True,
-            'title': reminder.title,
-            'description': reminder.description
-        })
-    
-    return JsonResponse({'has_reminder': False})
-

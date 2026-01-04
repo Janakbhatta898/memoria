@@ -3,46 +3,124 @@
 <head>
 <meta charset="UTF-8">
 <title>Camera Livestream with Face Recognition</title>
+
 <style>
-  body { 
-    margin: 0; 
-    background: #000; 
-    color: #fff; 
-    font-family: sans-serif; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-  }
-  #video-container { 
-    position: relative; 
-    width: 1000px; 
-    height: 480px; 
-  }
-  img { 
-    width: 100%; 
-    height: 100%; 
-    border: 2px solid #fff; 
-    background: #5c3737ff;
-    object-fit: contain;
-  }
-  #status {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    background: rgba(0,0,0,0.7);
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 12px;
-  }
+body {
+  margin: 0;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+#video-container {
+  position: relative;
+  width: 640px;
+  height: 480px;
+}
+
+/* Camera */
+#video {
+  width: 100%;
+  height: 100%;
+  border: 2px solid #fff;
+  object-fit: contain;
+}
+
+/* Floating button */
+#todo-btn {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(8px);
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Glass todo panel */
+#todo-panel {
+  position: absolute;
+  bottom: 65px;
+  left: 12px;
+  width: 280px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 15px;
+  display: none;
+
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(15px);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+}
+
+.todo-item {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.todo-title {
+  font-weight: bold;
+}
 </style>
 </head>
+
 <body>
 
 <div id="video-container">
+
+  <!-- BACKEND STREAM -->
   <img id="video" src="/app/camera/video_feed/" alt="Live Camera Stream">
-  
+
+  <!-- Button -->
+  <button id="todo-btn">☰</button>
+
+  <!-- Glass Todo Panel -->
+  <div id="todo-panel"></div>
+
 </div>
+
+<script>
+const btn = document.getElementById("todo-btn");
+const panel = document.getElementById("todo-panel");
+let open = false;
+
+btn.onclick = () => {
+  open = !open;
+  panel.style.display = open ? "block" : "none";
+
+  if (open) {
+    fetch("/app/todos/")
+      .then(res => res.json())
+      .then(data => {
+        panel.innerHTML = "<h4>Todo List<br> book flight to taiwan</h4>";
+
+        if (data.todos.length === 0) {
+          panel.innerHTML += "<p>No tasks</p>";
+        }
+
+        data.todos.forEach(todo => {
+          panel.innerHTML += `
+            <div class="todo-item">
+              <div class="todo-title">${todo.title}</div>
+              <div>${todo.description}</div>
+            </div>
+          `;
+        });
+      });
+  }
+};
+</script>
 
 </body>
 </html>

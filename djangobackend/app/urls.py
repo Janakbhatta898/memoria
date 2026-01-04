@@ -7,6 +7,7 @@ urlpatterns=[
     path('',views.home,name='home'),
     path('camera/',views.camera,name='camera'),
     path('patient/',PatientAPIView.as_view()),
-    path('check-reminder/', views.check_reminder, name='check_reminder'),
-    path('camera/video_feed/', views.video_feed, name='video_feed')
+    path('camera/video_feed/', views.video_feed, name='video_feed'),
+    path("todos/", views.todo_list, name="todo_list"),
+
 ]
