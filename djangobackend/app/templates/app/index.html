@@ -1,67 +1,206 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Enter Patient ID</title>
+  <title>Patient Access</title>
+
   <style>
-    body { 
-      font-family: sans-serif; 
-      margin: 0; 
-      background: #000; 
-      color: #fff; 
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+
+      /* CLEAN, MODERN UI FONT STACK */
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Inter",
+        "SF Pro Text",
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-    }
-    .container {
-      background: #222;
-      padding: 40px;
-      border-radius: 10px;
-      text-align: center;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    }
-    h1 {
-      margin-bottom: 30px;
-    }
-    input {
-      padding: 12px;
-      font-size: 16px;
-      width: 300px;
-      border: 2px solid #555;
-      border-radius: 5px;
-      background: #333;
       color: #fff;
-      margin-bottom: 20px;
+
+      /* subtle font smoothing */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    button {
-      padding: 12px 30px;
-      font-size: 16px;
-      background: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      padding: 42px 40px;
+      border-radius: 20px;
+
+      background:
+        linear-gradient(180deg,
+          rgba(255, 255, 255, 0.14),
+          rgba(255, 255, 255, 0.05));
+
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+
+      box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+
+      text-align: center;
+      position: relative;
+      animation: fadeIn 0.8s ease;
     }
-    button:hover {
-      background: #45a049;
+
+    .container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 18%;
+      right: 18%;
+      height: 3px;
+      border-radius: 0 0 6px 6px;
+      background: linear-gradient(90deg, #219ebc, #ffb703);
     }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 26px;
+      font-weight: 500;
+      /* cleaner than 600 */
+      letter-spacing: -0.2px;
+      color: #ffb703;
+    }
+
+    .subtitle {
+      font-size: 14.5px;
+      font-weight: 400;
+      color: #dbe5ea;
+      margin-bottom: 34px;
+      line-height: 1.6;
+    }
+
     form {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      gap: 22px;
+    }
+
+    input {
+      padding: 15px 16px;
+      font-size: 15.5px;
+      font-weight: 400;
+      letter-spacing: 0.1px;
+
+      border-radius: 12px;
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      outline: none;
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+
+      transition: border 0.3s, box-shadow 0.3s, background 0.3s;
+    }
+
+    input::placeholder {
+      color: #b0bec5;
+      font-weight: 400;
+    }
+
+    input:focus {
+      border-color: #219ebc;
+      background: rgba(0, 0, 0, 0.45);
+      box-shadow: 0 0 0 4px rgba(33, 158, 188, 0.22);
+    }
+
+    button {
+      padding: 15px;
+      font-size: 15.5px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(135deg, #219ebc, #023047);
+
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(33, 158, 188, 0.45);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    button.loading {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .note {
+      margin-top: 28px;
+      font-size: 12.5px;
+      font-weight: 400;
+      letter-spacing: 0.15px;
+      color: #b7c6cf;
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h1>Enter Patient ID</h1>
-    <form method="POST">
-      {% csrf_token %}
-      <input type="text" name="patient_id" placeholder="Patient ID " required>
-      <button type="submit">Start Camera</button>
-    </form>
-  </div>
-</body>
-</html>
 
+<body>
+
+  <div class="container">
+    <h1>Patient Verification</h1>
+    <div class="subtitle">
+      Enter the patient ID to securely start the camera
+    </div>
+
+    <form method="POST" onsubmit="startLoading()">
+      {% csrf_token %}
+      <input type="text" name="patient_id" placeholder="Enter Patient ID" required>
+      <button id="startBtn" type="submit">
+        Start Camera
+      </button>
+    </form>
+
+    <div class="note">
+      Your data is handled securely.
+    </div>
+  </div>
+
+  <script>
+    function startLoading() {
+      const btn = document.getElementById("startBtn");
+      btn.classList.add("loading");
+      btn.innerText = "Starting...";
+    }
+  </script>
+
+</body>
+
+</html>
