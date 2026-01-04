@@ -6,58 +6,38 @@
   <title>Patient Access</title>
 
   <style>
+    /* ===== RESET ===== */
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
       min-height: 100vh;
-
-      /* CLEAN, MODERN UI FONT STACK */
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Inter",
-        "SF Pro Text",
-        "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
-        sans-serif;
-
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       display: flex;
       justify-content: center;
       align-items: center;
       color: #fff;
-
-      /* subtle font smoothing */
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
+    /* ===== CARD ===== */
     .container {
       width: 100%;
       max-width: 420px;
       padding: 42px 40px;
       border-radius: 20px;
-
-      background:
-        linear-gradient(180deg,
-          rgba(255, 255, 255, 0.14),
-          rgba(255, 255, 255, 0.05));
-
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05));
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
-
-      box-shadow:
-        0 30px 60px rgba(0, 0, 0, 0.45),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15);
       text-align: center;
       position: relative;
-      animation: fadeIn 0.8s ease;
+      animation: fadeIn 0.6s ease;
     }
 
     .container::before {
@@ -74,7 +54,7 @@
     @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translateY(24px);
+        transform: translateY(20px);
       }
 
       to {
@@ -83,73 +63,69 @@
       }
     }
 
+    /* ===== HEADER ===== */
     h1 {
-      margin-bottom: 8px;
       font-size: 26px;
       font-weight: 500;
-      /* cleaner than 600 */
       letter-spacing: -0.2px;
       color: #ffb703;
+      margin-bottom: 10px;
     }
 
     .subtitle {
-      font-size: 14.5px;
+      font-size: 15px;
       font-weight: 400;
       color: #dbe5ea;
-      margin-bottom: 34px;
+      margin-bottom: 36px;
       line-height: 1.6;
     }
 
+    /* ===== FORM ===== */
     form {
       display: flex;
       flex-direction: column;
-      gap: 22px;
+      gap: 20px;
     }
 
     input {
-      padding: 15px 16px;
-      font-size: 15.5px;
+      padding: 14px 16px;
+      font-size: 15px;
       font-weight: 400;
       letter-spacing: 0.1px;
-
       border-radius: 12px;
       border: 1.5px solid rgba(255, 255, 255, 0.15);
-      outline: none;
       background: rgba(0, 0, 0, 0.35);
       color: #fff;
-
-      transition: border 0.3s, box-shadow 0.3s, background 0.3s;
+      transition: border 0.25s, box-shadow 0.25s, background 0.25s;
     }
 
     input::placeholder {
       color: #b0bec5;
-      font-weight: 400;
     }
 
     input:focus {
       border-color: #219ebc;
       background: rgba(0, 0, 0, 0.45);
-      box-shadow: 0 0 0 4px rgba(33, 158, 188, 0.22);
+      box-shadow: 0 0 0 4px rgba(33, 158, 188, 0.25);
+      outline: none;
     }
 
     button {
-      padding: 15px;
+      padding: 14px;
       font-size: 15.5px;
       font-weight: 500;
       letter-spacing: 0.2px;
-
       border-radius: 14px;
       border: none;
       cursor: pointer;
       color: #fff;
       background: linear-gradient(135deg, #219ebc, #023047);
-
-      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
     }
 
     button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(33, 158, 188, 0.45);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(33, 158, 188, 0.45);
     }
 
     button:active {
@@ -163,7 +139,7 @@
     }
 
     .note {
-      margin-top: 28px;
+      margin-top: 26px;
       font-size: 12.5px;
       font-weight: 400;
       letter-spacing: 0.15px;
@@ -176,21 +152,15 @@
 
   <div class="container">
     <h1>Patient Verification</h1>
-    <div class="subtitle">
-      Enter the patient ID to securely start the camera
-    </div>
+    <div class="subtitle">Enter the patient ID to securely start the camera</div>
 
     <form method="POST" onsubmit="startLoading()">
-      {% csrf_token %}
+
       <input type="text" name="patient_id" placeholder="Enter Patient ID" required>
-      <button id="startBtn" type="submit">
-        Start Camera
-      </button>
+      <button id="startBtn" type="submit">Start Camera</button>
     </form>
 
-    <div class="note">
-      Your data is handled securely.
-    </div>
+    <div class="note">Your data is handled securely.</div>
   </div>
 
   <script>
